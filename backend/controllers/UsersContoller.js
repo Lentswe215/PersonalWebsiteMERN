@@ -7,10 +7,10 @@ const Encrypt = async (strVal) => {
   return hash;
 }
 
-const UsersModel = require("../models/UserInfoModel");
+const UserInfoModel = require("../models/UserInfoModel");
 
 const GetAllUsers = asyncHandler(async (req, res) => {
-  const users = await UsersModel.find();
+  const users = await UserInfoModel.find();
   res.status(200).json(users);
 });
 
@@ -25,7 +25,7 @@ const CreateUser = asyncHandler(async (req, res) => {
   } else {
 
     let password = await Encrypt(req.body.Password);
-    const user = await UsersModel.create({
+    const user = await UserInfoModel.create({
       FirstName: req.body.FirstName,
       LastName: req.body.LastName,
       EmailAddress: req.body.EmailAddress,
