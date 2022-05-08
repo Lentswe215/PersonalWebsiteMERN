@@ -1,3 +1,5 @@
+"use strict";
+
 const asyncHandler = require('express-async-handler');
 
 const GetAllProjects = asyncHandler(async (req, res) => {

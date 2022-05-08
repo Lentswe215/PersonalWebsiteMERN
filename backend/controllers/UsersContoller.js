@@ -1,3 +1,5 @@
+"use strict";
+
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 
@@ -15,7 +17,7 @@ const GetAllUsers = asyncHandler(async (req, res) => {
 
 const GetUser = asyncHandler(async (req, res) => {
   var user = await UserInfoModel.findById(req.params.id);
-// console.log(user);
+  // console.log(user);
   res.status(200).json(user);
 });
 
@@ -47,45 +49,55 @@ const UpdateUser = asyncHandler(async (req, res) => {
   const user = await UserInfoModel.findById(req.params.id);
 
   if (!user) {
-    res.status(404);
-    throw new Error("User not found!");
+    res.status(404).json({ErrorMessage:"User not found!"});
   }
   var UserUpdatedInfo = {
     FirstName: await IsNotEmpty(req.body.FirstName, user.FirstName),
     LastName: await IsNotEmpty(req.body.LastName, user.LastName),
     EmailAddress: await IsNotEmpty(req.body.EmailAddress, user.EmailAddress),
     Password: await IsNotEmpty(req.body.Password, user.Password, true),
-    EmailConfirmed: await IsNotEmpty(req.body.EmailConfirmed, user.EmailConfirmed),
+    EmailConfirmed: await IsNotEmpty(
+      req.body.EmailConfirmed,
+      user.EmailConfirmed
+    ),
     LoginCookie: await IsNotEmpty(req.body.LoginCookie, user.LoginCookie),
     IsDeleted: await IsNotEmpty(req.body.IsDeleted, user.IsDeleted),
   };
-  const UpdatedUser = await UserInfoModel.findByIdAndUpdate(
+
+  
+  if(user != null){
+  UserInfoModel.findByIdAndUpdate(
     req.params.id,
     UserUpdatedInfo,
     {
-      new: false,
+      new: true,
+    },
+    function (err, doc) {
+      if (err) {
+        res.status(404).json({ErrorMessage: "User not found!"});
+      } else res.status(200).json(doc);
     }
   );
-  res.status(200).json(UpdatedUser);
+  }
+
+  // res.status(200).json(UpdatedUser);
 });
 
 const DeleteUser = asyncHandler(async (req, res) => {
+  const deletedUser = await UserInfoModel.findByIdAndUpdate(
+    req.params.id,
+    { IsDeleted: true },
+    { new: false }
+  );
 
-const user = await UserInfoModel.findById(req.params.id);
-  if(!user)
-  {
-    res.status(404);
-    throw new Error("User not found!");
-  }
-
-  const deletedUser = await UserInfoModel.findByIdAndDelete(req.params.id);
-  res.status(200).json(deletedUser);
+  if (deletedUser == null)
+    res.status(400).json({ ErrorMessage: "Unable to delete user" });
+  else res.status(200).json(deletedUser);
 });
 
 const IsNotEmpty = async (newValue, oldValue, IsPassword = false) => {
   if (newValue != null && newValue != "") {
-    if (IsPassword) 
-     newValue = await Encrypt(newValue);
+    if (IsPassword) newValue = await Encrypt(newValue);
     else newValue;
 
     return newValue;

@@ -1,3 +1,5 @@
+"use strict";
+
 const asyncHandler = require('express-async-handler');
 
 const GetAllPageContents = asyncHandler(async (req, res) => {
