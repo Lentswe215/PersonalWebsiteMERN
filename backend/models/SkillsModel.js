@@ -6,6 +6,9 @@ const SkillsSchema = mongoose.Schema({
   AddedBy: String,
   ModifiedBy: String,
   IsDeleted: Boolean,
+},
+{
+  timestamps: true,
 });
 
 module.exports = mongoose.model("Skills", SkillsSchema, "Skills");

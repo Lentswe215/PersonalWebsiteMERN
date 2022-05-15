@@ -7,6 +7,9 @@ const ProjectsSchema = mongoose.Schema({
   AddedBy: String,
   ModifiedBy: String,
   IsDeleted: Boolean,
+},
+{
+  timestamps: true,
 });
 
 module.exports = mongoose.model("Projects", ProjectsSchema, "Projects");

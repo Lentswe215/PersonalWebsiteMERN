@@ -15,6 +15,7 @@ app.use("/api/users", require("./routes/users-routes"));
 app.use("/api/pagecontents", require("./routes/page-content-routes"));
 app.use("/api/projects", require("./routes/projects-routes"));
 app.use("/api/skills", require("./routes/skills-routes"));
+app.use("/api/contactmessages", require("./routes/contact-message-routes"));
 app.use("/api/account", require("./routes/account-routes"));
 
 app.use(ErrorHandler);

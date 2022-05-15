@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ContactsSchema = mongoose.Schema({
+const ContactMessagesSchema = mongoose.Schema({
   FromName: String,
   Mobile: String,
   EmailAddress: String,
@@ -8,10 +8,13 @@ const ContactsSchema = mongoose.Schema({
   Message: String,
   Date: Date,
   SenderIP: String,
+},
+{
+  timestamps: true,
 });
 
 module.exports = mongoose.model(
   "ContactMessages",
-  ContactsSchema,
+  ContactMessagesSchema,
   "ContactMessages"
 );

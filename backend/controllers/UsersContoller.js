@@ -2,6 +2,7 @@
 
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
+const {IsNotEmpty, IsPasswordNotEmpty } = require("../StringHelper");
 
 const Encrypt = async (strVal) => {
   var hash = await bcrypt.hashSync(strVal, 16);
@@ -52,11 +53,11 @@ const UpdateUser = asyncHandler(async (req, res) => {
     res.status(404).json({ErrorMessage:"User not found!"});
   }
   var UserUpdatedInfo = {
-    FirstName: await IsNotEmpty(req.body.FirstName, user.FirstName),
-    LastName: await IsNotEmpty(req.body.LastName, user.LastName),
-    EmailAddress: await IsNotEmpty(req.body.EmailAddress, user.EmailAddress),
-    Password: await IsNotEmpty(req.body.Password, user.Password, true),
-    EmailConfirmed: await IsNotEmpty(
+    FirstName: IsNotEmpty(req.body.FirstName, user.FirstName),
+    LastName: IsNotEmpty(req.body.LastName, user.LastName),
+    EmailAddress: IsNotEmpty(req.body.EmailAddress, user.EmailAddress),
+    Password: await IsPasswordNotEmpty(req.body.Password, user.Password, true),
+    EmailConfirmed: IsNotEmpty(
       req.body.EmailConfirmed,
       user.EmailConfirmed
     ),
@@ -95,14 +96,6 @@ const DeleteUser = asyncHandler(async (req, res) => {
   else res.status(200).json(deletedUser);
 });
 
-const IsNotEmpty = async (newValue, oldValue, IsPassword = false) => {
-  if (newValue != null && newValue != "") {
-    if (IsPassword) newValue = await Encrypt(newValue);
-    else newValue;
-
-    return newValue;
-  } else return oldValue;
-};
 
 module.exports = {
   GetAllUsers,

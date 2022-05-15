@@ -1,27 +1,94 @@
 "use strict";
 
-const asyncHandler = require('express-async-handler');
+const asyncHandler = require("express-async-handler");
+const ProjectsModel = require("../models/ProjectsModel");
+const { IsNotEmpty } = require("../StringHelper");
 
 const GetAllProjects = asyncHandler(async (req, res) => {
-    res.json({message: "Getting all system projects"});
-})
+  const projects = await ProjectsModel.find();
+  console.log(projects);
+  res.status(200).json(projects);
+});
 
 const GetProject = asyncHandler(async (req, res) => {
-    res.json({message: `Get single project with id: ${req.params.id} `})
-})
+  const project = await ProjectsModel.findById(req.params.id);
+
+  if (project == null)
+    res.status(400).json({ ErrorMessage: "Project is not available!" });
+  else res.status(200).json(project);
+});
 
 const CreateProject = asyncHandler(async (req, res) => {
-    res.json({message: "Creating a project"});
-})
+  if (!req.body.Name || !req.body.LinkUrl)
+    res
+      .status(400)
+      .json({ ErrorMessage: "Please make sure all required field!" });
+  else {
+    const project = await ProjectsModel.create({
+      Name: req.body.Name,
+      Image: req.body.Image,
+      LinkUrl: req.body.LinkUrl,
+      AddedBy: req.body.AddedBy,
+      ModifiedBy: req.body.AddedBy,
+      IsDeleted: false,
+    });
+
+    res.status(200).json(project);
+  }
+});
 
 const UpdateProject = asyncHandler(async (req, res) => {
-    res.json({message: `Updating project information with id: ${req.params.id}`});
-})
+  const project = await ProjectsModel.findById(req.params.id);
+
+  if (!project) res.status(400).json({ ErrorMessage: "Project not found!" });
+  else {
+    let ProjectUpdatedInfo = {
+      Name: IsNotEmpty(req.body.Name, project.Name),
+      Image: IsNotEmpty(req.body.Image, project.Image),
+      ModifiedBy: IsNotEmpty(req.body.ModifiedBy, project.ModifiedBy),
+      IsDeleted: false,
+    };
+
+    ProjectsModel.findByIdAndUpdate(
+      req.params.id,
+      ProjectUpdatedInfo,
+      { new: true },
+      function (err, doc) {
+        if (err) res.status(400).json({ ErrorMessage: "Error: " + err });
+        else res.status(200).json(doc);
+      }
+    );
+  }
+  // const updatedProject =
+});
 
 const DeleteProject = asyncHandler(async (req, res) => {
-    res.json({"message": `Deleting a project with id: ${req.params.id}`});
-})
+  const project = await ProjectsModel.findById(req.params.id);
+  if (project == null)
+    res.status(400).json({ ErrorMessage: "Project not found" });
+  else {
+    const deletedProject = await ProjectsModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        IsDeleted: true,
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (deletedProject == null)
+      res
+        .status(400)
+        .json({ ErrorMessage: "There was a problem deleting project." });
+    else res.status(200).json(deletedProject);
+  }
+});
 
 module.exports = {
-    GetAllProjects, GetProject, CreateProject, UpdateProject, DeleteProject
-}
+  GetAllProjects,
+  GetProject,
+  CreateProject,
+  UpdateProject,
+  DeleteProject,
+};
