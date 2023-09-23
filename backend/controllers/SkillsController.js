@@ -2,6 +2,7 @@
 
 const asyncHandler = require("express-async-handler");
 const SkillsModel = require("../models/SkillsModel");
+const { ValidateAuthToken } = require("../helpers/AuthHelper");
 
 const GetAllSkills = asyncHandler(async (req, res) => {
   const skills = await SkillsModel.find();
@@ -22,17 +23,18 @@ const GetSkill = asyncHandler(async (req, res) => {
 });
 
 const CreateSkill = asyncHandler(async (req, res) => {
-  if (!ValidateAuthToken()) {
+  if (!ValidateAuthToken(req.headers.authorization)) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
-    if (!req.body.Name) {
+    const {Name, Type} = req.body;
+    if (!Name) {
       res.status(400).json({ ErrorMessage: "Please enter skill name" });
     } else {
       const skill = await SkillsModel.create({
-        Name: req.body.Name,
-        Type: req.body.Type,
-        AddedBy: req.body.CurrentUserId,
-        ModifiedBy: req.body.CurrentUserId,
+        Name,
+        Type,
+        AddedBy: 1,
+        ModifiedBy: 1,
         IsDeleted: false,
       });
 
@@ -47,10 +49,12 @@ const UpdateSkill = asyncHandler(async (req, res) => {
   if (!ValidateAuthToken()) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
+    const {Name, Type} = req.body;
+
     let SkillUpdatedInfo = {
-      Name: req.body.Name,
-      Type: req.body.Type,
-      ModifiedBy: req.body.CurrentUserId,
+      Name,
+      Type,
+      ModifiedBy: 1,
     };
     const updatedSkill = await SkillsModel.findByIdAndUpdate(
       req.params.id,

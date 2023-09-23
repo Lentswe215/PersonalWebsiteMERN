@@ -6,9 +6,17 @@ const {
   UpdatePageContent,
   DeletePageContent,
 } = require("../controllers/PageContentsController");
+const { protect } = require("../middleware/auth-middleware");
 const pageContentRouter = express.Router();
 
-pageContentRouter.route("/").get(GetAllPageContents).post(CreatePageContent);
-pageContentRouter.route("/:id").get(GetPageContent).put(UpdatePageContent).delete(DeletePageContent);
+pageContentRouter
+  .route("/")
+  .get(protect, GetAllPageContents)
+  .post(protect, CreatePageContent);
+pageContentRouter.route("/:slug").get(GetPageContent);
+pageContentRouter
+  .route("/:id")
+  .put(protect, UpdatePageContent)
+  .delete(protect, DeletePageContent);
 
 module.exports = pageContentRouter;

@@ -4,6 +4,7 @@ const ProjectsSchema = mongoose.Schema({
   Name:String,
   Image:  String,
   LinkUrl: String,
+  SkillsUsed: String,
   AddedBy: String,
   ModifiedBy: String,
   IsDeleted: Boolean,

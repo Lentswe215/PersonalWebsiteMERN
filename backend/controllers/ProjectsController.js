@@ -3,6 +3,7 @@
 const asyncHandler = require("express-async-handler");
 const ProjectsModel = require("../models/ProjectsModel");
 const { IsNotEmpty } = require("../StringHelper");
+const { ValidateAuthToken } = require("../helpers/AuthHelper");
 
 const GetAllProjects = asyncHandler(async (req, res) => {
   const projects = await ProjectsModel.find();
@@ -11,7 +12,7 @@ const GetAllProjects = asyncHandler(async (req, res) => {
 });
 
 const GetProject = asyncHandler(async (req, res) => {
-  if (!ValidateAuthToken()) {
+  if (!ValidateAuthToken(req.headers.authorization)) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
     const project = await ProjectsModel.findById(req.params.id);
@@ -23,20 +24,23 @@ const GetProject = asyncHandler(async (req, res) => {
 });
 
 const CreateProject = asyncHandler(async (req, res) => {
-  if (!ValidateAuthToken()) {
+  if (!ValidateAuthToken(req.headers.authorization)) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
-    if (!req.body.Name || !req.body.LinkUrl)
+    const { Name, Image, LinkUrl, SkillsUsed } = req.body;
+
+    if (!Name || !LinkUrl)
       res
         .status(400)
         .json({ ErrorMessage: "Please make sure all required field!" });
     else {
       const project = await ProjectsModel.create({
-        Name: req.body.Name,
-        Image: req.body.Image,
-        LinkUrl: req.body.LinkUrl,
-        AddedBy: req.body.AddedBy,
-        ModifiedBy: req.body.AddedBy,
+        Name,
+        Image,
+        LinkUrl,
+        SkillsUsed,
+        AddedBy: 1,
+        ModifiedBy: 1,
         IsDeleted: false,
       });
 
@@ -46,17 +50,20 @@ const CreateProject = asyncHandler(async (req, res) => {
 });
 
 const UpdateProject = asyncHandler(async (req, res) => {
-  if (!ValidateAuthToken()) {
+  if (!ValidateAuthToken(req.headers.authorization)) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
+    const { Name, NewImage, LinkUrl, SkillsUsed } = req.body;
     const project = await ProjectsModel.findById(req.params.id);
 
     if (!project) res.status(400).json({ ErrorMessage: "Project not found!" });
     else {
       let ProjectUpdatedInfo = {
-        Name: IsNotEmpty(req.body.Name, project.Name),
-        Image: IsNotEmpty(req.body.Image, project.Image),
-        ModifiedBy: IsNotEmpty(req.body.ModifiedBy, project.ModifiedBy),
+        Name,
+        Image: IsNotEmpty(NewImage, project.Image),
+        LinkUrl,
+        SkillsUsed,
+        ModifiedBy: 1,
         IsDeleted: false,
       };
 
@@ -75,7 +82,7 @@ const UpdateProject = asyncHandler(async (req, res) => {
 });
 
 const DeleteProject = asyncHandler(async (req, res) => {
-  if (!ValidateAuthToken()) {
+  if (!ValidateAuthToken(req.headers.authorization)) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
     const project = await ProjectsModel.findById(req.params.id);

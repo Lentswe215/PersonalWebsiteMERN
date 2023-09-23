@@ -1,5 +1,8 @@
-export const ValidateAuthToken = (Bearer) => {
+const ValidateAuthToken = (Bearer) => {
   var validUser =
-    Bearer.toLowerCase().replace("Bearer ", "") == process.env.SYSTEM_AUTHTOKEN;
+    process.env.SYSTEM_AUTHTOKEN.toLowerCase().trim();
+
   return validUser;
 };
+
+module.exports = { ValidateAuthToken };

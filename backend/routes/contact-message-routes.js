@@ -5,13 +5,14 @@ const {
   GetContactMessage,
   CreateContactMessage,
 } = require("../controllers/ContactMessagesController");
+const { protect } = require("../middleware/auth-middleware");
 
 const contactMessageRouter = express.Router();
 
 contactMessageRouter
   .route("/")
-  .get(GetAllContactMessages)
+  .get(protect, GetAllContactMessages)
   .post(CreateContactMessage);
-contactMessageRouter.route("/:id").get(GetContactMessage);
+contactMessageRouter.route("/:id").get(protect, GetContactMessage);
 
 module.exports = contactMessageRouter;

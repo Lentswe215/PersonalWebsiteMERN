@@ -2,7 +2,7 @@
 
 const asyncHandler = require("express-async-handler");
 const ContactMessagesModel = require("../models/ContactMessagesModel");
-const { SendMail } = require("../helpers/EmailHelper");
+const { SendMail } = require("../helpers/EmailController");
 const { ValidateAuthToken } = require("../helpers/AuthHelper");
 
 const GetAllContactMessages = asyncHandler(async (req, res) => {
@@ -15,7 +15,7 @@ const GetAllContactMessages = asyncHandler(async (req, res) => {
 });
 
 const GetContactMessage = asyncHandler(async (req, res) => {
-  if (!ValidateAuthToken())
+  if (!ValidateAuthToken(req.headers.authorization))
     res.status(401).json({ ErrorMessage: "Auth toke is invalid" });
   else {
     const message = await ContactMessagesModel.findById(req.params.id);
@@ -26,24 +26,20 @@ const GetContactMessage = asyncHandler(async (req, res) => {
 });
 
 const CreateContactMessage = asyncHandler(async (req, res) => {
-  if (
-    !req.body.FromName ||
-    !req.body.Mobile ||
-    !req.body.EmailAddress ||
-    !req.body.Message
-  ) {
+  const { FromName, Mobile, EmailAddress, Subject, Message , Date, SenderIP} = req.body;
+  if (FromName || Mobile || EmailAddress || Message) {
     res
       .status(400)
       .json({ ErrorMessage: "Please make sure all required field are filled" });
   } else {
     const message = await ContactMessagesModel.create({
-      FromName: req.body.FromName,
-      Mobile: req.body.Mobile,
-      EmailAddress: req.body.EmailAddress,
-      Subject: req.body.Subject,
-      Message: req.body.Message,
-      Date: req.body.Date,
-      SenderIP: req.body.SenderIPs,
+      FromName: FromName,
+      Mobile:Mobile,
+      EmailAddress: EmailAddress,
+      Subject: Subject,
+      Message: Message,
+      Date: Date,
+      SenderIP: SenderIP,
     });
 
     if (message == null)

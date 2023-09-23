@@ -6,5 +6,5 @@ const {
 
 const accountRouter = express.Router();
 accountRouter.get("/login/:username/:password", UserLogin);
-accountRouter.get("/checkadminstatus/:AuthToken", CheckAdminStatus);
+// accountRouter.get("/checkadminstatus/:AuthToken", CheckAdminStatus);
 module.exports = accountRouter;
