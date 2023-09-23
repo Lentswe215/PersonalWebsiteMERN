@@ -21,7 +21,7 @@ const SendMail = async (Email, Subject, Message) => {
       service: "gmail",
       auth: {
         type: "OAuth2",
-        user: "ephraimmamonong@gmail.com",
+        user: process.env.SMTP_USER,
         clientId: process.env.SMTP_CLIENTID,
         clientSecret: process.env.SMTP_CLIENT_SECRET,
         refreshToken: process.env.SMTP_REFRESH_TOKEN,

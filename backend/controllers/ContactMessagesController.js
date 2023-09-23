@@ -2,19 +2,27 @@
 
 const asyncHandler = require("express-async-handler");
 const ContactMessagesModel = require("../models/ContactMessagesModel");
-const { SendMail } = require("./EmailController");
+const { SendMail } = require("../helpers/EmailHelper");
+const { ValidateAuthToken } = require("../helpers/AuthHelper");
 
 const GetAllContactMessages = asyncHandler(async (req, res) => {
-  const messages = await ContactMessagesModel.find();
-  res.status(200).json(messages);
+  if (!ValidateAuthToken())
+    res.status(401).json({ ErrorMessage: "Auth toke is invalid" });
+  else {
+    const messages = await ContactMessagesModel.find();
+    res.status(200).json(messages);
+  }
 });
 
 const GetContactMessage = asyncHandler(async (req, res) => {
-  const message = await ContactMessagesModel.findById(req.params.id);
-
-  if (message == null)
-    res.status(400).json({ ErrorMessage: "Message is not available" });
-  else res.status(200).json(message);
+  if (!ValidateAuthToken())
+    res.status(401).json({ ErrorMessage: "Auth toke is invalid" });
+  else {
+    const message = await ContactMessagesModel.findById(req.params.id);
+    if (message == null)
+      res.status(400).json({ ErrorMessage: "Message is not available" });
+    else res.status(200).json(message);
+  }
 });
 
 const CreateContactMessage = asyncHandler(async (req, res) => {
@@ -28,17 +36,15 @@ const CreateContactMessage = asyncHandler(async (req, res) => {
       .status(400)
       .json({ ErrorMessage: "Please make sure all required field are filled" });
   } else {
-    const message = await ContactMessagesModel.create(
-      {
-        FromName: req.body.FromName,
-        Mobile: req.body.Mobile,
-        EmailAddress: req.body.EmailAddress,
-        Subject: req.body.Subject,
-        Message: req.body.Message,
-        Date: req.body.Date,
-        SenderIP: req.body.SenderIPs,
-      },
-    );
+    const message = await ContactMessagesModel.create({
+      FromName: req.body.FromName,
+      Mobile: req.body.Mobile,
+      EmailAddress: req.body.EmailAddress,
+      Subject: req.body.Subject,
+      Message: req.body.Message,
+      Date: req.body.Date,
+      SenderIP: req.body.SenderIPs,
+    });
 
     if (message == null)
       res
@@ -57,7 +63,7 @@ const CreateContactMessage = asyncHandler(async (req, res) => {
 });
 
 const SendMessage = (SenderName, SenderEmail, Subject, Message) => {
-  let msg = "Hello Tlamelo, <br/><br/>";
+  let msg = "";
   msg += "There is a new contact message. Details are below:";
   msg += `<b> From :</b> ${SenderName}<br/>`;
   msg += `<b> Email : </b> ${SenderEmail}<br/>`;
