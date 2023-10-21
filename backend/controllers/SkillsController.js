@@ -26,17 +26,32 @@ const CreateSkill = asyncHandler(async (req, res) => {
   if (!ValidateAuthToken(req.headers.authorization)) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
-    const {Name, Type} = req.body;
+    const { _id, Name, Type } = req.body;
     if (!Name) {
       res.status(400).json({ ErrorMessage: "Please enter skill name" });
     } else {
-      const skill = await SkillsModel.create({
-        Name,
-        Type,
-        AddedBy: 1,
-        ModifiedBy: 1,
-        IsDeleted: false,
-      });
+      let skill = null;
+      if (_id) {
+        let SkillUpdatedInfo = {
+          Name,
+          Type,
+          ModifiedBy: 1,
+        };
+
+        skill = await SkillsModel.findByIdAndUpdate(
+          _id,
+          { $set: SkillUpdatedInfo },
+          { new: false }
+        );
+      } else {
+        skill = await SkillsModel.create({
+          Name,
+          Type,
+          AddedBy: 1,
+          ModifiedBy: 1,
+          IsDeleted: false,
+        });
+      }
 
       if (skill == null)
         res.status(400).json({ ErrorMessage: "Unable to save skills" });
@@ -49,7 +64,7 @@ const UpdateSkill = asyncHandler(async (req, res) => {
   if (!ValidateAuthToken()) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
-    const {Name, Type} = req.body;
+    const { Name, Type } = req.body;
 
     let SkillUpdatedInfo = {
       Name,
@@ -74,7 +89,7 @@ const DeleteSkill = asyncHandler(async (req, res) => {
   } else {
     const deletedSkill = await SkillsModel.findByIdAndUpdate(
       req.params.id,
-      { IsDeleted: true, ModifiedBy: req.body.CurrentUserId },
+      {$set: { IsDeleted: true, ModifiedBy: 1 }},
       { new: false }
     );
 

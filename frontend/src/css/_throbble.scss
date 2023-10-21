@@ -1,0 +1,23 @@
+.throbble-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba($color: $dark-color, $alpha: 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & .throbble-inner {
+    width: 300px;
+    min-height: 100px;
+    background-color: $dark-color;
+    color: $green-color;
+    border: 3px solid $green-color;
+    font-size: 17px;
+    text-align: center;
+    padding: 1.2em;
+    text-transform: uppercase;
+  }
+}

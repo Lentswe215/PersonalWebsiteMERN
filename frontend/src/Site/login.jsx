@@ -57,58 +57,69 @@ function Login() {
               <h3>Admin Login</h3>
             </div>
             <div className="card-body">
-              <div className="mb-3">
-                <label>
-                  Username
-                  <span id="errUsername" className="ErrorText" />
-                </label>
-                <Input
-                  type="text"
-                  className="form-control-sm"
-                  autoCorrect="false"
-                  autoComplete="false"
-                  onChange={(e) => {
-                    setFormData((prevState) => ({
-                      ...prevState,
-                      username: e.target.value,
-                    }));
-                    ValidateField(e.target.value, "errUsername", "* Required");
-                  }}
-                />
-              </div>
-              <div className="mb-3">
-                <label>
-                  Password
-                  <span id="errPassword" className="ErrorText" />
-                </label>
-                <Input
-                  type="password"
-                  className="form-control-sm"
-                  onChange={(e) => {
-                    setFormData((prevState) => ({
-                      ...prevState,
-                      password: e.target.value,
-                    }));
-                    ValidateField(e.target.value, "errPassword", "* Required");
-                  }}
-                />
-              </div>
-              <div className="text-end">
-                <Button
-                  type="button"
-                  size="sm"
-                  color="primary"
-                  onClick={onLoginUser}
-                >
-                  {isLoading ? (
-                    <>
-                      <Spinner color="light" size={"sm"} /> Processing
-                    </>
-                  ) : (
-                    <>Login</>
-                  )}
-                </Button>
-              </div>
+              <form onSubmit={onLoginUser}>
+                <div className="mb-3">
+                  <label>
+                    Username
+                    <span id="errUsername" className="ErrorText" />
+                  </label>
+                  <Input
+                    type="text"
+                    className="form-control-sm"
+                    autoCorrect="false"
+                    autoComplete="false"
+                    onChange={(e) => {
+                      setFormData((prevState) => ({
+                        ...prevState,
+                        username: e.target.value,
+                      }));
+                      ValidateField(
+                        e.target.value,
+                        "errUsername",
+                        "* Required"
+                      );
+                    }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label>
+                    Password
+                    <span id="errPassword" className="ErrorText" />
+                  </label>
+                  <Input
+                    type="password"
+                    className="form-control-sm"
+                    autoComplete="false"
+                    onChange={(e) => {
+                      setFormData((prevState) => ({
+                        ...prevState,
+                        password: e.target.value,
+                      }));
+                      ValidateField(
+                        e.target.value,
+                        "errPassword",
+                        "* Required"
+                      );
+                    }}
+                  />
+                </div>
+                <div className="text-end">
+                  <Button
+                    type="submit"
+                    size="sm"
+                    color="primary"
+                    // onClick={}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Spinner color="light" size={"sm"} /> Processing
+                      </>
+                    ) : (
+                      <>Login</>
+                    )}
+                  </Button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

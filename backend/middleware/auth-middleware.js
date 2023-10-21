@@ -9,10 +9,10 @@ const protect = (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(" ")[1];
-      jwt.verify(token);
+     const result= jwt.verify(token, process.env.JWT_SECRET);
       next();
     } catch (e) {
-      console.error(e);
+      console.error("Error JWT:",e);
       res.status(401);
       throw new Error("Not Authorized");
     }

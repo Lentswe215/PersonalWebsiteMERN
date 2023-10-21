@@ -19,10 +19,11 @@ const GetPageContent = asyncHandler(async (req, res) => {
 });
 
 const CreatePageContent = asyncHandler(async (req, res) => {
+  console.log(req)
   if (!ValidateAuthToken(req.headers.authorization)) {
     res.status(401).send({ ErrorMessage: "Not Valid user" });
   } else {
-    const { Title, MetaData } = req.body;
+    const { _id, Title, MetaData } = req.body;
     if (!Title)
       res.status(400).json({ ErrorMessage: "Please enter page content title" });
     else {
