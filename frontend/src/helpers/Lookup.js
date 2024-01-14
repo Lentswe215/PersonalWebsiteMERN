@@ -1,6 +1,9 @@
 import { useDispatch } from "react-redux";
 import { reset } from "../features/auth/authSlice";
 
+export const GetServerPath = () => {
+    return `http://localhost:5000/`;
+}
 export const GetAPIUrl = (Endpoint) => {
     if (Endpoint)
         return `http://localhost:5000/api/${Endpoint}`;

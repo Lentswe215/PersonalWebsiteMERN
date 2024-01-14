@@ -15,6 +15,9 @@ import { toast } from "react-toastify";
 import { ConfirmHelper } from "../helpers/ConfrmHelper";
 
 function SkillsAdmin() {
+
+  document.title = "EM :: Skills Admin"
+
   const FormObj = {
     _id: 0,
     Name: "",

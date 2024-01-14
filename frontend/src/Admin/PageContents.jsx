@@ -46,6 +46,7 @@ function PageContentsAdmin() {
         setPages(data);
         ThrobbleHelper.hide();
       } else {
+        console.log(response.status, ":", response.statusText);
         if (response.status === 401) {
           clearUserDetails();
           window.location.href = "/login";
